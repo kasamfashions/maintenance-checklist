@@ -1217,10 +1217,36 @@
             } finally {
                 overlay.classList.remove('show');
                 // Show a brief success toast if sheet save worked
-                if (sheetResult && sheetResult.success) showToast(`✅ Saved to Database(${sheetResult.rowsAdded} rows)`);
-                else if (sheetResult && sheetResult.skipped) showToast('⚠️ PDF downloaded. Configure Apps Script URL to save to Sheets.');
-            }
-        }
+                 if (sheetResult && sheetResult.success) showToast(`✅ Saved to Database(${sheetResult.rowsAdded} rows)`);
+                 else if (sheetResult && sheetResult.skipped) showToast('⚠️ PDF downloaded. Configure Apps Script URL to save to Sheets.');
+                 
+                 // Reset form only if submission was successful or skipped (not on error)
+                 if (sheetResult && (sheetResult.success || sheetResult.skipped)) {
+                     resetForm();
+                 }
+             }
+         }
+
+         function resetForm() {
+             // Reset Header Fields
+             document.getElementById('rep-store').value = '';
+             document.getElementById('rep-in').value = '';
+             document.getElementById('rep-out').value = '';
+             
+             // Reset Issues Table
+             const tbody = document.getElementById('issues-body');
+             tbody.innerHTML = '';
+             totalIssues = 0; // Reset counter
+             for (let j = 0; j < 15; j++) {
+                 addIssueRow();
+             }
+             
+             // Update Score Card
+             updateScoreCard();
+             
+             // Scroll to top
+             window.scrollTo({ top: 0, behavior: 'smooth' });
+         }
 
         // ── Lightweight toast notification ───────────────────────────
         function showToast(message) {
