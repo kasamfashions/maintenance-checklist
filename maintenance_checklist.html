@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maintenance Checklist – Kasam Fashions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4ff;
+            background-image:
+                radial-gradient(circle at 20px 20px, rgba(99, 102, 241, .08) 2%, transparent 0%),
+                radial-gradient(circle at 70px 70px, rgba(99, 102, 241, .08) 2%, transparent 0%);
+            background-size: 90px 90px;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -15%;
+            left: -15%;
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(168, 85, 247, .18), transparent 70%);
+            filter: blur(100px);
+            z-index: 0;
+            animation: drift 18s infinite alternate ease-in-out;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -15%;
+            right: -15%;
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(79, 70, 229, .18), transparent 70%);
+            filter: blur(120px);
+            z-index: 0;
+            animation: drift 24s infinite alternate ease-in-out;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translate(0, 0);
+            }
+
+            to {
+                transform: translate(40px, 60px) scale(1.1);
+            }
+        }
+
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px 16px 120px;
+        }
+
+        /* ── Header ── */
+        .app-header {
+            background: rgba(255, 255, 255, .85);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 1px 20px rgba(0, 0, 0, .07);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .app-header-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-wrap {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #f1f5f9;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .12);
+            flex-shrink: 0;
+        }
+
+        .logo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 4px;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1.1;
+        }
+
+        .header-subtitle {
+            font-size: .8rem;
+            font-weight: 500;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: rgba(255, 255, 255, .82);
+            backdrop-filter: blur(14px);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, .08);
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: box-shadow .3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .12);
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e7ff;
+        }
+
+        .section-title .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            flex-shrink: 0;
+        }
+
+        /* ── Info Grid ── */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field-group label {
+            font-size: .75rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        /* Shared style for input, select */
+        .field-group input,
+        .field-group select {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: .9rem;
+            font-family: inherit;
+            color: #1e293b;
+            transition: border-color .2s, box-shadow .2s;
+            background: rgba(255, 255, 255, .9);
+            outline: none;
+            width: 100%;
+        }
+
+        .field-group input:focus,
+        .field-group select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .15);
+        }
+
+        /* dropdown skeleton loader */
+        .field-group select.loading {
+            color: #94a3b8;
+            background-image: repeating-linear-gradient(90deg, #e2e8f0 0px, #f1f5f9 40px, #e2e8f0 80px);
+            background-size: 200px 100%;
+            animation: shimmer 1.2s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            from {
+                background-position: -200px 0;
+            }
+
+            to {
+                background-position: 200px 0;
+            }
+        }
+
+        /* fetch error badge */
+        .fetch-error {
+            font-size: .72rem;
+            color: #ef4444;
+            font-weight: 600;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .fetch-error.show {
+            display: block;
+        }
+
+        /* ── Issues Table ── */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: .88rem;
+        }
+
+        thead tr th {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #fff;
+            font-weight: 700;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: .82rem;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        thead tr th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        thead tr th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        tbody tr {
+            transition: background .2s;
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(238, 240, 255, .6);
+        }
+
+        tbody tr:nth-child(odd) {
+            background: rgba(255, 255, 255, .7);
+        }
+
+        tbody tr:hover {
+            background: rgba(224, 231, 255, .8);
+        }
+
+        tbody tr td {
+            padding: 0;
+            vertical-align: top;
+            border-bottom: 1px solid rgba(226, 232, 240, .8);
+        }
+
+        tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 12px;
+        }
+
+        tbody tr:last-child td:last-child {
+            border-radius: 0 0 12px 0;
+        }
+
+        .issue-label {
+            padding: 14px 16px;
+            font-weight: 700;
+            color: #4f46e5;
+            white-space: nowrap;
+            width: 90px;
+            background: rgba(238, 240, 255, .5);
+            vertical-align: middle;
+        }
+
+        .cell-input {
+            width: 100%;
+            min-height: 60px;
+            border: none;
+            outline: none;
+            resize: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: .88rem;
+            color: #1e293b;
+            padding: 14px;
+            transition: background .2s;
+            line-height: 1.5;
+        }
+
+        .cell-input:focus {
+            background: rgba(99, 102, 241, .06);
+        }
+
+        .cell-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .status-cell {
+            padding: 10px 12px;
+            text-align: center;
+            vertical-align: middle;
+            width: 130px;
+        }
+
+        .status-select {
+            appearance: none;
+            width: 100%;
+            padding: 8px 30px 8px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            text-align: center;
+            transition: all .2s;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
+        }
+
+        .status-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .15);
+        }
+
+        .status-select.completed {
+            background-color: #dcfce7;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            border-color: #4ade80;
+            color: #166534;
+        }
+
+        .status-select.pending {
+            background-color: #fef9c3;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            border-color: #facc15;
+            color: #713f12;
+        }
+
+        .status-select.not-done {
+            background-color: #fee2e2;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            border-color: #f87171;
+            color: #991b1b;
+        }
+
+        /* ── Submit ── */
+        .submit-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 15px 48px;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: .02em;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, .4);
+            transition: transform .2s, box-shadow .2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(99, 102, 241, .5);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, .3);
+        }
+
+        .btn-submit svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* ── Loading overlay ── */
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .6);
+            backdrop-filter: blur(6px);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        #loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 5px solid rgba(255, 255, 255, .3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        @media print {
+            body {
+                background: none !important;
+            }
+
+            body::before,
+            body::after {
+                display: none;
+            }
+
+            .app-header,
+            .btn-submit,
+            #loading-overlay {
+                display: none !important;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            table {
+                font-size: .8rem;
+            }
+
+            .issue-label {
+                width: 70px;
+                font-size: .8rem;
+            }
+
+            .status-cell {
+                width: 100px;
+            }
+
+            .btn-submit {
+                padding: 13px 32px;
+                font-size: .9rem;
+            }
+        }
+
+        /* ── Test Fill Button ── */
+        .btn-test {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: rgba(99, 102, 241, .1);
+            color: #4f46e5;
+            border: 2px dashed #a5b4fc;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: .78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            letter-spacing: .02em;
+            white-space: nowrap;
+        }
+
+        .btn-test:hover {
+            background: rgba(99, 102, 241, .18);
+            border-color: #6366f1;
+            transform: translateY(-1px);
+        }
+
+        .btn-test:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══ HEADER ══════════════════════════════════════════════════ -->
+    <header class="app-header">
+        <div class="app-header-inner" style="justify-content: space-between;">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <div class="logo-wrap">
+                    <img src="https://www.dropbox.com/scl/fi/3w8cuktwjostzrb21pafw/LOGO-2.png?rlkey=crkvpkwg128csjf52s565avoa&st=8gpamj7c&raw=1"
+                        alt="Kasam Fashions Logo" />
+                </div>
+                <div>
+                    <div class="header-title">Kasam Fashions</div>
+                    <div class="header-subtitle">Maintenance Team Checklist</div>
+                </div>
+            </div>
+            <button class="btn-test" onclick="fillForTest()" title="Auto-fill all fields with test data">
+                Test Fill
+            </button>
+        </div>
+    </header>
+
+    <!-- ══ LOADING OVERLAY ═════════════════════════════════════════ -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="overlay-text">Loading data… please wait</div>
+    </div>
+
+    <div class="page-wrapper">
+        <div id="checklist-capture">
+
+            <!-- Reporter Info -->
+            <div class="card">
+                <div class="section-title"><span class="dot"></span>General Details</div>
+                <div class="info-grid">
+
+                    <!-- Name dropdown -->
+                    <div class="field-group">
+                        <label for="rep-name">Name</label>
+                        <select id="rep-name" class="loading">
+                            <option value="">Loading names…</option>
+                        </select>
+                        <span class="fetch-error" id="err-name">⚠ Could not load names</span>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="field-group">
+                        <label for="rep-date">Date</label>
+                        <input type="date" id="rep-date" /><!-- max set by JS -->
+                    </div>
+
+                    <!-- Store Name dropdown -->
+                    <div class="field-group">
+                        <label for="rep-store">Store Name</label>
+                        <select id="rep-store" class="loading">
+                            <option value="">Loading stores…</option>
+                        </select>
+                        <span class="fetch-error" id="err-store">⚠ Could not load stores</span>
+                    </div>
+
+                    <!-- Inward Time -->
+                    <div class="field-group">
+                        <label for="rep-inward">Inward Time</label>
+                        <input type="time" id="rep-inward" />
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Score Card -->
+            <div class="card">
+                <div class="section-title"><span class="dot"></span>Score Card</div>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: space-between;">
+                    <div style="flex: 1; min-width: 120px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Total Issues</div>
+                        <div id="score-total" style="font-size: 1.8rem; font-weight: 800; color: #1e293b; margin-top: 5px;">0</div>
+                    </div>
+                    <div style="flex: 1; min-width: 120px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #166534; text-transform: uppercase;">Completed</div>
+                        <div id="score-completed" style="font-size: 1.8rem; font-weight: 800; color: #22c55e; margin-top: 5px;">0</div>
+                    </div>
+                    <div style="flex: 1; min-width: 120px; background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #854d0e; text-transform: uppercase;">Pending</div>
+                        <div id="score-pending" style="font-size: 1.8rem; font-weight: 800; color: #eab308; margin-top: 5px;">0</div>
+                    </div>
+                    <div style="flex: 1; min-width: 120px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #991b1b; text-transform: uppercase;">Not Done</div>
+                        <div id="score-not-done" style="font-size: 1.8rem; font-weight: 800; color: #ef4444; margin-top: 5px;">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Issues Table -->
+            <div class="card">
+                <div class="section-title"><span class="dot"></span>Maintenance Issues</div>
+                <div class="table-wrap">
+                    <table id="issues-table">
+                        <thead>
+                            <tr>
+                                <th style="width:90px">Issue</th>
+                                <th>Description</th>
+                                <th>Solution</th>
+                                <th style="width:130px;text-align:center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="issues-body"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 16px; display: flex; justify-content: center;" data-html2canvas-ignore="true">
+                    <button class="btn-test" style="color: #6366f1; border-color: #c7d2fe; background: rgba(99, 102, 241, 0.08); padding: 8px 18px; font-size: 0.85rem;" onclick="addIssueRow()">
+                        ➕ Insert Issue
+                    </button>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="submit-wrap" data-html2canvas-ignore="true">
+                <button class="btn-submit" onclick="handleSubmit()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Submit &amp; Download PDF
+                </button>
+            </div>
+
+        </div><!-- /#checklist-capture -->
+    </div>
+
+    <script>
+        // ══════════════════════════════════════════════════════════════
+        //  ⚙️  CONFIGURE YOUR APPS SCRIPT URL HERE
+        // ══════════════════════════════════════════════════════════════
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzS0IQAB7fmACvKyV7X6iPbdkH0EyEJnpH1RhmBWERpYtAOyM2qpNJjLkfriBqUn11QcA/exec';
+        // Replace the string above with your deployed Apps Script URL.
+        // e.g. 'https://script.google.com/macros/s/AKfy.../exec'
+        // ══════════════════════════════════════════════════════════════
+
+        // ── Set today's date as default & block future dates ─────────
+        const todayStr = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('rep-date');
+        dateInput.value = todayStr;
+        dateInput.max = todayStr;
+
+        // ── Build issue rows ──────────────────────────────────────────
+        const tbody = document.getElementById('issues-body');
+        let totalIssues = 0;
+
+        function updateScoreCard() {
+            let completed = 0, pending = 0, notDone = 0;
+            const selects = document.querySelectorAll('.status-select');
+            selects.forEach(sel => {
+                if(sel.value === 'completed') completed++;
+                else if(sel.value === 'pending') pending++;
+                else if(sel.value === 'not-done') notDone++;
+            });
+            const tEl = document.getElementById('score-total');
+            if (tEl) tEl.textContent = completed + pending + notDone;
+            const cEl = document.getElementById('score-completed');
+            if (cEl) cEl.textContent = completed;
+            const pEl = document.getElementById('score-pending');
+            if (pEl) pEl.textContent = pending;
+            const nEl = document.getElementById('score-not-done');
+            if (nEl) nEl.textContent = notDone;
+        }
+
+        function addIssueRow() {
+            totalIssues++;
+            const i = totalIssues;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+            <td class="issue-label">Issue ${i}</td>
+            <td><textarea class="cell-input" id="desc-${i}" placeholder="Describe the issue…" rows="3"></textarea></td>
+            <td><textarea class="cell-input" id="sol-${i}"  placeholder="Proposed / applied solution…" rows="3"></textarea></td>
+            <td class="status-cell">
+                <select class="status-select" id="status-${i}" onchange="updateSelectStyle(this)">
+                    <option value="">— Select —</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="not-done">Not Done</option>
+                </select>
+            </td>`;
+            tbody.appendChild(tr);
+            updateScoreCard();
+        }
+
+        // Initialize with 15 rows
+        for (let j = 0; j < 15; j++) {
+            addIssueRow();
+        }
+
+        // ── Colour-code the status dropdowns ─────────────────────────
+        function updateSelectStyle(sel) {
+            sel.className = 'status-select';
+            if (sel.value) sel.classList.add(sel.value);
+            updateScoreCard();
+        }
+
+        // ── Populate a <select> with an array of strings ──────────────
+        function populateSelect(selectId, items, placeholder) {
+            const sel = document.getElementById(selectId);
+            sel.innerHTML = `<option value="">${placeholder}</option>`;
+            items.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item;
+                opt.textContent = item;
+                sel.appendChild(opt);
+            });
+            sel.classList.remove('loading');
+        }
+
+        // ── Fetch Names & Stores from Apps Script ─────────────────────
+        async function loadDropdowns() {
+            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') {
+                // Fallback: show manual input placeholders
+                populateSelect('rep-name', [], '— Enter manually —');
+                populateSelect('rep-store', [], '— Enter manually —');
+                document.getElementById('err-name').textContent = '⚠ Apps Script URL not set';
+                document.getElementById('err-store').textContent = '⚠ Apps Script URL not set';
+                document.getElementById('err-name').classList.add('show');
+                document.getElementById('err-store').classList.add('show');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${APPS_SCRIPT_URL}?action=getDropdowns`);
+                const data = await res.json();
+
+                if (data.names && Array.isArray(data.names)) populateSelect('rep-name', data.names, '— Select Name —');
+                else { document.getElementById('err-name').classList.add('show'); document.getElementById('rep-name').classList.remove('loading'); }
+
+                if (data.stores && Array.isArray(data.stores)) populateSelect('rep-store', data.stores, '— Select Store —');
+                else { document.getElementById('err-store').classList.add('show'); document.getElementById('rep-store').classList.remove('loading'); }
+
+            } catch (err) {
+                console.error('Failed to fetch dropdowns:', err);
+                document.getElementById('err-name').classList.add('show');
+                document.getElementById('err-store').classList.add('show');
+                document.getElementById('rep-name').classList.remove('loading');
+                document.getElementById('rep-store').classList.remove('loading');
+            }
+        }
+
+        // Run on page load
+        loadDropdowns();
+
+        // ── ⚡ Test Fill – auto-populate all fields ───────────────────
+        function fillForTest() {
+            const rand = arr => arr[Math.floor(Math.random() * arr.length)];
+
+            // ── Header fields ────────────────────────────────────────
+            // Pick from loaded dropdown options, fallback to sample pools
+            const nameEl = document.getElementById('rep-name');
+            const storeEl = document.getElementById('rep-store');
+
+            const namePool = [...nameEl.options].map(o => o.value).filter(v => v);
+            const storePool = [...storeEl.options].map(o => o.value).filter(v => v);
+            const fallbackNames = ['Ravi Kumar', 'Priya Singh', 'Aman Gupta', 'Sunita Verma', 'Deepak Joshi'];
+            const fallbackStores = ['Kasam – Malviya Nagar', 'Kasam – C-Scheme', 'Kasam – Vaishali Nagar', 'Kasam – Mansarovar'];
+
+            nameEl.value = rand(namePool.length ? namePool : fallbackNames);
+            storeEl.value = rand(storePool.length ? storePool : fallbackStores);
+
+            // Date: today (already set, keep as is)
+            // Inward time: random between 08:00 – 11:30
+            const hrs = String(8 + Math.floor(Math.random() * 4)).padStart(2, '0');
+            const mins = rand(['00', '15', '30', '45']);
+            document.getElementById('rep-inward').value = `${hrs}:${mins}`;
+
+            // ── Issue data pools ─────────────────────────────────────
+            const descriptions = [
+                'AC unit in the fitting room is not cooling properly.',
+                'Ceiling light flickering near the checkout counter.',
+                'Water leakage observed near the store entrance.',
+                'Main entrance door hinge is broken and not closing fully.',
+                'Floor tile cracked near the display section.',
+                'Fire extinguisher inspection tag is overdue.',
+                'CCTV camera near stockroom showing blank screen.',
+                'Electrical switchboard panel has loose wiring.',
+                'Hand sanitiser dispenser near entrance is empty / broken.',
+                'Store signage LED strip partially not working.',
+                'Stockroom shelf bracket bent and needs replacement.',
+                'Trial room mirror has a crack on the lower side.',
+                'Exhaust fan in washroom making loud noise.',
+                'POS machine billing counter has loose cable.',
+                'Mannequin stand on the ground floor is unstable.',
+            ];
+            const solutions = [
+                'Called HVAC technician – scheduled visit for tomorrow.',
+                'Replaced faulty tube light and starter.',
+                'Plumber contacted, temporary seal applied.',
+                'Hinge replaced with spare from maintenance kit.',
+                'Cordoned off area, floor tile order placed.',
+                'Inspection done, new tag affixed.',
+                'Checked DVR connection, camera cable re-seated.',
+                'Electrician called, wiring tightened and taped.',
+                'Refilled dispenser, lodged replacement request.',
+                'Replaced damaged LED section, rest functional.',
+                'New bracket installed from stock.',
+                'Mirror replacement ordered from vendor.',
+                'Fan motor lubricated, noise reduced.',
+                'Cable re-routed and clipped properly.',
+                'Base plate adjusted and ankles tightened.',
+            ];
+            const statuses = ['completed', 'pending', 'not-done'];
+            const statusSel = ['completed', 'pending', 'not-done'];
+
+            // Shuffle description indices so no two issues repeat
+            const idxPool = [...Array(descriptions.length).keys()];
+            for (let i = idxPool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [idxPool[i], idxPool[j]] = [idxPool[j], idxPool[i]];
+            }
+
+            for (let i = 1; i <= totalIssues; i++) {
+                const idx = idxPool[(i - 1) % descriptions.length];
+                const descEl = document.getElementById(`desc-${i}`);
+                if(descEl) descEl.value = descriptions[idx];
+                const solEl = document.getElementById(`sol-${i}`);
+                if(solEl) solEl.value = solutions[idx];
+                const sel = document.getElementById(`status-${i}`);
+                if(sel) {
+                    sel.value = rand(statusSel);
+                    updateSelectStyle(sel);
+                }
+            }
+        }
+
+
+        function collectIssues() {
+            const issues = [];
+            for (let i = 1; i <= totalIssues; i++) {
+                const statusEl = document.getElementById(`status-${i}`);
+                const rawStatus = statusEl ? statusEl.value : '';
+                const statusLabel = { 'completed': 'Completed', 'pending': 'Pending', 'not-done': 'Not Done' }[rawStatus] || '';
+                issues.push({
+                    number: i,
+                    description: (document.getElementById(`desc-${i}`) || {}).value || '',
+                    solution: (document.getElementById(`sol-${i}`) || {}).value || '',
+                    status: statusLabel
+                });
+            }
+            return issues;
+        }
+
+        // ── POST data to Google Sheets via Apps Script ────────────────
+        async function saveToSheet(name, storeName, date, inwardTime, issues) {
+            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') {
+                console.warn('Apps Script URL not configured – skipping sheet save.');
+                return { skipped: true };
+            }
+            const res = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'saveSubmission', name, storeName, date, inwardTime, issues })
+            });
+            return await res.json();
+        }
+
+        // ── Submit & Download PDF ─────────────────────────────────────
+        async function handleSubmit() {
+            const name = document.getElementById('rep-name').value.trim();
+            const date = document.getElementById('rep-date').value;
+            const store = document.getElementById('rep-store').value.trim();
+            const inward = document.getElementById('rep-inward').value;
+
+            if (!name || !date || !store || !inward) {
+                alert('⚠️  Please fill in all header fields (Name, Date, Store Name, Inward Time) before submitting.');
+                return;
+            }
+
+            const overlay = document.getElementById('loading-overlay');
+            const overlayText = document.getElementById('overlay-text');
+
+            // ── Step 1: Save to Google Sheets ────────────────────────
+            overlayText.textContent = 'Saving Data to Database…';
+            overlay.classList.add('show');
+            await new Promise(r => setTimeout(r, 100));
+
+            const issues = collectIssues();
+            let sheetResult = {};
+            try {
+                sheetResult = await saveToSheet(name, store, date, inward, issues);
+                if (sheetResult.success) console.log(`✅ Sheet: ${sheetResult.rowsAdded} rows saved`);
+                else if (sheetResult.skipped) console.warn('Sheet save skipped – URL not set.');
+                else console.error('Sheet error:', sheetResult.error);
+            } catch (sheetErr) {
+                console.error('Could not reach Apps Script:', sheetErr);
+            }
+
+            // ── Step 2: Generate PDF ──────────────────────────────────
+            overlayText.textContent = 'Generating PDF… please wait';
+            await new Promise(r => setTimeout(r, 80));
+
+            try {
+                const el = document.getElementById('checklist-capture');
+
+                // ── Highlighted PDF Header for Store and Name ─────────
+                const pdfHeader = document.createElement('div');
+                pdfHeader.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; padding: 20px 30px; border-radius: 14px; margin-bottom: 24px; box-shadow: 0 8px 30px rgba(79, 70, 229, 0.2); display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; background: #fff; padding: 4px; flex-shrink: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <img src="https://www.dropbox.com/scl/fi/3w8cuktwjostzrb21pafw/LOGO-2.png?rlkey=crkvpkwg128csjf52s565avoa&st=8gpamj7c&raw=1" style="width: 100%; height: 100%; object-fit: contain;" crossorigin="anonymous" />
+                            </div>
+                            <div>
+                                <div style="font-size: 1.4rem; font-weight: 800; line-height: 1.2;">Kasam Fashions</div>
+                                <div style="font-size: 0.85rem; font-weight: 500; opacity: 0.9;">Maintenance Team Checklist</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 4px;"> Name: <strong style="color: #fbbf24; font-weight: 800; padding: 2px 6px; background: rgba(0,0,0,0); border-radius: 4px;">${name}</strong></div>
+                            <div style="font-size: 1.1rem; font-weight: 600;"> Visit Store: <strong style="color: #fbbf24; font-weight: 800; padding: 2px 6px; background: rgba(0,0,0,0); border-radius: 4px;">${store}</strong></div>
+                        </div>
+                    </div>
+                `;
+                el.insertBefore(pdfHeader, el.firstChild);
+
+                // ── Swap textareas → plain divs ───────────────────────
+                const textareas = el.querySelectorAll('textarea');
+                const swaps = [];
+                textareas.forEach(ta => {
+                    const div = document.createElement('div');
+                    div.style.padding = '14px';
+                    div.style.minHeight = ta.offsetHeight + 'px';
+                    div.style.fontFamily = 'Inter, sans-serif';
+                    div.style.fontSize = '.88rem';
+                    div.style.whiteSpace = 'pre-wrap';
+                    div.style.lineHeight = '1.5';
+                    div.style.background = 'transparent';
+                    div.textContent = ta.value || ta.placeholder;
+                    div.style.color = ta.value ? '#1e293b' : '#94a3b8';
+                    ta.parentNode.insertBefore(div, ta);
+                    ta.style.display = 'none';
+                    swaps.push({ el: ta, placeholder: div });
+                });
+
+                // ── Swap status <select>s → styled badge divs ─────────
+                const statusConfig = {
+                    'completed': { bg: '#dcfce7', border: '#4ade80', color: '#166534', label: 'Completed' },
+                    'pending': { bg: '#fef9c3', border: '#facc15', color: '#713f12', label: 'Pending' },
+                    'not-done': { bg: '#fee2e2', border: '#f87171', color: '#991b1b', label: 'Not Done' },
+                    '': { bg: '#f1f5f9', border: '#cbd5e1', color: '#64748b', label: '—' },
+                };
+                const selects = el.querySelectorAll('select.status-select');
+                selects.forEach(sel => {
+                    const cfg = statusConfig[sel.value] || statusConfig[''];
+                    const badge = document.createElement('div');
+                    badge.textContent = cfg.label;
+                    badge.style.cssText = `
+                        display: inline-block;
+                        padding: 6px 14px;
+                        border-radius: 999px;
+                        background: ${cfg.bg};
+                        border: 2px solid ${cfg.border};
+                        color: ${cfg.color};
+                        font-family: Inter, sans-serif;
+                        font-size: .8rem;
+                        font-weight: 700;
+                        text-align: center;
+                        width: 100%;
+                        box-sizing: border-box;
+                    `;
+                    sel.parentNode.insertBefore(badge, sel);
+                    sel.style.display = 'none';
+                    swaps.push({ el: sel, placeholder: badge });
+                });
+
+
+                const canvas = await html2canvas(el, {
+                    scale: 2, useCORS: true, logging: false,
+                    backgroundColor: '#f0f4ff'
+                });
+
+                swaps.forEach(({ el, placeholder }) => { el.style.display = ''; placeholder.remove(); });
+                pdfHeader.remove(); // Cleanup injected header
+
+                // Multi-page A4 PDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+                const pdfW = pdf.internal.pageSize.getWidth();
+                const pdfH = pdf.internal.pageSize.getHeight();
+                const margin = 24;
+                const imgW = pdfW - margin * 2;
+                const usableH = pdfH - margin * 2;
+                
+                // Find safe break points in canvas coordinates
+                const elRect = el.getBoundingClientRect();
+                const safeBreaks = [];
+                // Target elements that should not be split (cards, table headers, rows)
+                el.querySelectorAll('.card, thead, tr, .info-grid > div').forEach(node => {
+                    const rect = node.getBoundingClientRect();
+                    const bottomY = Math.round((rect.bottom - elRect.top) * 2); // html2canvas scale = 2
+                    safeBreaks.push(bottomY);
+                });
+                safeBreaks.push(canvas.height);
+                safeBreaks.sort((a,b) => a - b);
+
+                let srcY = 0, page = 0;
+                while (srcY < canvas.height) {
+                    if (page > 0) pdf.addPage();
+                    
+                    const maxSliceH = (usableH / imgW) * canvas.width;
+                    let targetY = srcY + maxSliceH;
+                    
+                    if (targetY >= canvas.height) {
+                        targetY = canvas.height;
+                    } else {
+                        let bestBreakY = srcY + maxSliceH;
+                        for (let i = safeBreaks.length - 1; i >= 0; i--) {
+                            if (safeBreaks[i] <= targetY && safeBreaks[i] > srcY) {
+                                bestBreakY = safeBreaks[i];
+                                break;
+                            }
+                        }
+                        targetY = bestBreakY;
+                    }
+                    
+                    const sliceH = targetY - srcY;
+                    const chunkPt = (sliceH / canvas.width) * imgW;
+                    
+                    const sc = document.createElement('canvas');
+                    sc.width = canvas.width;
+                    sc.height = sliceH;
+                    sc.getContext('2d').drawImage(canvas, 0, srcY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+                    pdf.addImage(sc.toDataURL('image/png'), 'PNG', margin, margin, imgW, chunkPt);
+                    
+                    srcY = targetY;
+                    page++;
+                }
+
+                const safeDate = date.replace(/-/g, '');
+                const safeName = name.replace(/\s+/g, '_');
+                const safeStore = store.replace(/\s+/g, '_');
+                pdf.save(`Maintenance_${safeStore}_${safeName}_${safeDate}.pdf`);
+
+            } catch (err) {
+                console.error('PDF error:', err);
+                alert('❌ Failed to generate PDF. Please try again.');
+            } finally {
+                overlay.classList.remove('show');
+                // Show a brief success toast if sheet save worked
+                if (sheetResult && sheetResult.success) showToast(`✅ Saved to Database(${sheetResult.rowsAdded} rows)`);
+                else if (sheetResult && sheetResult.skipped) showToast('⚠️ PDF downloaded. Configure Apps Script URL to save to Sheets.');
+            }
+        }
+
+        // ── Lightweight toast notification ───────────────────────────
+        function showToast(message) {
+            const t = document.createElement('div');
+            t.textContent = message;
+            t.style.cssText = `
+            position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
+            background:#1e293b; color:#fff; padding:12px 24px; border-radius:50px;
+            font-size:.88rem; font-weight:600; box-shadow:0 8px 24px rgba(0,0,0,.25);
+            z-index:9999; opacity:0; transition:opacity .3s, transform .3s;
+            white-space:nowrap; font-family:Inter,sans-serif;`;
+            document.body.appendChild(t);
+            requestAnimationFrame(() => {
+                t.style.opacity = '1';
+                t.style.transform = 'translateX(-50%) translateY(0)';
+            });
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transform = 'translateX(-50%) translateY(20px)';
+                setTimeout(() => t.remove(), 400);
+            }, 4000);
+        }
+    </script>
+</body>
+
+</html>
