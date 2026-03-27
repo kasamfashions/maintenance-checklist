@@ -536,6 +536,85 @@
         .btn-test:active {
             transform: translateY(0);
         }
+
+        /* ── Login Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.hidden {
+            display: none !important;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, .95);
+            backdrop-filter: blur(14px);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .2);
+            text-align: center;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .login-input:focus {
+            border-color: #6366f1;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, .1);
+            color: #ef4444;
+            border: 2px dashed #fca5a5;
+            padding: 7px 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: .78rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, .2);
+        }
+
+        .admin-panel {
+            text-align: left;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .user-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .user-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
     </style>
 </head>
 
@@ -546,17 +625,21 @@
         <div class="app-header-inner" style="justify-content: space-between;">
             <div style="display:flex; align-items:center; gap:14px;">
                 <div class="logo-wrap">
-                    <img src="https://www.dropbox.com/scl/fi/3w8cuktwjostzrb21pafw/LOGO-2.png?rlkey=crkvpkwg128csjf52s565avoa&st=8gpamj7c&raw=1"
-                        alt="Kasam Fashions Logo" />
+                    <img src="./LOGO-2.png" alt="Kasam Fashions Logo" />
                 </div>
                 <div>
                     <div class="header-title">Kasam Fashions</div>
-                    <div class="header-subtitle">Maintenance Team Checklist</div>
+                    <div class="header-subtitle">Operations Team Checklist</div>
                 </div>
             </div>
-            <button class="btn-test" onclick="fillForTest()" title="Auto-fill all fields with test data">
-                Test Fill
-            </button>
+            <div style="display:flex; gap: 8px; align-items: center;">
+                <button class="btn-logout" id="btn-logout" style="display: none;" onclick="handleLogout()">
+                    Logout
+                </button>
+                <button class="btn-test" onclick="fillForTest()" title="Auto-fill all fields with test data">
+                    Test Fill
+                </button>
+            </div>
         </div>
     </header>
 
@@ -566,6 +649,22 @@
         <div class="loading-text" id="overlay-text">Loading data… please wait</div>
     </div>
 
+    <!-- ══ LOGIN MODAL ═════════════════════════════════════════════ -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="login-card">
+            <div class="logo-wrap" style="margin: 0 auto 20px;">
+                <img src="./LOGO-2.png" alt="Logo" />
+            </div>
+            <h2 style="margin-bottom: 24px; font-weight: 800; color: #1e293b;">Login with your Credentials</h2>
+            <input type="text" id="login-username" class="login-input" placeholder="Username" />
+            <input type="password" id="login-password" class="login-input" placeholder="Password" />
+            <div id="login-error" style="color: #ef4444; font-size: 0.85rem; margin-bottom: 16px; display: none;">
+                Invalid credentials</div>
+            <button class="btn-submit" style="width: 100%; justify-content: center;"
+                onclick="performLogin()">Login</button>
+        </div>
+    </div>
+
     <div class="page-wrapper">
         <div id="checklist-capture">
 
@@ -573,15 +672,6 @@
             <div class="card">
                 <div class="section-title"><span class="dot"></span>General Details</div>
                 <div class="info-grid">
-
-                    <!-- Name dropdown -->
-                    <div class="field-group">
-                        <label for="rep-name">Name</label>
-                        <select id="rep-name" class="loading">
-                            <option value="">Loading names…</option>
-                        </select>
-                        <span class="fetch-error" id="err-name">⚠ Could not load names</span>
-                    </div>
 
                     <!-- Date -->
                     <div class="field-group">
@@ -598,10 +688,16 @@
                         <span class="fetch-error" id="err-store">⚠ Could not load stores</span>
                     </div>
 
-                    <!-- Inward Time -->
+                    <!-- In Time -->
                     <div class="field-group">
-                        <label for="rep-inward">Inward Time</label>
-                        <input type="time" id="rep-inward" />
+                        <label for="rep-in">In Time</label>
+                        <input type="time" id="rep-in" />
+                    </div>
+
+                    <!-- Out Time -->
+                    <div class="field-group">
+                        <label for="rep-out">Out Time</label>
+                        <input type="time" id="rep-out" />
                     </div>
 
                 </div>
@@ -611,21 +707,33 @@
             <div class="card">
                 <div class="section-title"><span class="dot"></span>Score Card</div>
                 <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: space-between;">
-                    <div style="flex: 1; min-width: 120px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; text-align: center;">
-                        <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Total Issues</div>
-                        <div id="score-total" style="font-size: 1.8rem; font-weight: 800; color: #1e293b; margin-top: 5px;">0</div>
+                    <div
+                        style="flex: 1; min-width: 120px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase;">
+                            Total Issues</div>
+                        <div id="score-total"
+                            style="font-size: 1.8rem; font-weight: 800; color: #1e293b; margin-top: 5px;">0</div>
                     </div>
-                    <div style="flex: 1; min-width: 120px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 15px; text-align: center;">
-                        <div style="font-size: 0.8rem; font-weight: 700; color: #166534; text-transform: uppercase;">Completed</div>
-                        <div id="score-completed" style="font-size: 1.8rem; font-weight: 800; color: #22c55e; margin-top: 5px;">0</div>
+                    <div
+                        style="flex: 1; min-width: 120px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #166534; text-transform: uppercase;">
+                            Completed</div>
+                        <div id="score-completed"
+                            style="font-size: 1.8rem; font-weight: 800; color: #22c55e; margin-top: 5px;">0</div>
                     </div>
-                    <div style="flex: 1; min-width: 120px; background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 15px; text-align: center;">
-                        <div style="font-size: 0.8rem; font-weight: 700; color: #854d0e; text-transform: uppercase;">Pending</div>
-                        <div id="score-pending" style="font-size: 1.8rem; font-weight: 800; color: #eab308; margin-top: 5px;">0</div>
+                    <div
+                        style="flex: 1; min-width: 120px; background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #854d0e; text-transform: uppercase;">
+                            Pending</div>
+                        <div id="score-pending"
+                            style="font-size: 1.8rem; font-weight: 800; color: #eab308; margin-top: 5px;">0</div>
                     </div>
-                    <div style="flex: 1; min-width: 120px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 15px; text-align: center;">
-                        <div style="font-size: 0.8rem; font-weight: 700; color: #991b1b; text-transform: uppercase;">Not Done</div>
-                        <div id="score-not-done" style="font-size: 1.8rem; font-weight: 800; color: #ef4444; margin-top: 5px;">0</div>
+                    <div
+                        style="flex: 1; min-width: 120px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #991b1b; text-transform: uppercase;">Not
+                            Done</div>
+                        <div id="score-not-done"
+                            style="font-size: 1.8rem; font-weight: 800; color: #ef4444; margin-top: 5px;">0</div>
                     </div>
                 </div>
             </div>
@@ -647,7 +755,9 @@
                     </table>
                 </div>
                 <div style="margin-top: 16px; display: flex; justify-content: center;" data-html2canvas-ignore="true">
-                    <button class="btn-test" style="color: #6366f1; border-color: #c7d2fe; background: rgba(99, 102, 241, 0.08); padding: 8px 18px; font-size: 0.85rem;" onclick="addIssueRow()">
+                    <button class="btn-test"
+                        style="color: #6366f1; border-color: #c7d2fe; background: rgba(99, 102, 241, 0.08); padding: 8px 18px; font-size: 0.85rem;"
+                        onclick="addIssueRow()">
                         ➕ Insert Issue
                     </button>
                 </div>
@@ -672,7 +782,7 @@
         // ══════════════════════════════════════════════════════════════
         //  ⚙️  CONFIGURE YOUR APPS SCRIPT URL HERE
         // ══════════════════════════════════════════════════════════════
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzS0IQAB7fmACvKyV7X6iPbdkH0EyEJnpH1RhmBWERpYtAOyM2qpNJjLkfriBqUn11QcA/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQtpfgCIg9FOuXsRHE7YoEmxJ20ekEigousxdEfvEi6eHJBHwbYOkLnMhta-5pG1wFGA/exec';
         // Replace the string above with your deployed Apps Script URL.
         // e.g. 'https://script.google.com/macros/s/AKfy.../exec'
         // ══════════════════════════════════════════════════════════════
@@ -691,9 +801,9 @@
             let completed = 0, pending = 0, notDone = 0;
             const selects = document.querySelectorAll('.status-select');
             selects.forEach(sel => {
-                if(sel.value === 'completed') completed++;
-                else if(sel.value === 'pending') pending++;
-                else if(sel.value === 'not-done') notDone++;
+                if (sel.value === 'completed') completed++;
+                else if (sel.value === 'pending') pending++;
+                else if (sel.value === 'not-done') notDone++;
             });
             const tEl = document.getElementById('score-total');
             if (tEl) tEl.textContent = completed + pending + notDone;
@@ -750,15 +860,12 @@
             sel.classList.remove('loading');
         }
 
-        // ── Fetch Names & Stores from Apps Script ─────────────────────
+        // ── Fetch Stores from Apps Script ─────────────────────
         async function loadDropdowns() {
             if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') {
                 // Fallback: show manual input placeholders
-                populateSelect('rep-name', [], '— Enter manually —');
                 populateSelect('rep-store', [], '— Enter manually —');
-                document.getElementById('err-name').textContent = '⚠ Apps Script URL not set';
                 document.getElementById('err-store').textContent = '⚠ Apps Script URL not set';
-                document.getElementById('err-name').classList.add('show');
                 document.getElementById('err-store').classList.add('show');
                 return;
             }
@@ -767,17 +874,15 @@
                 const res = await fetch(`${APPS_SCRIPT_URL}?action=getDropdowns`);
                 const data = await res.json();
 
-                if (data.names && Array.isArray(data.names)) populateSelect('rep-name', data.names, '— Select Name —');
-                else { document.getElementById('err-name').classList.add('show'); document.getElementById('rep-name').classList.remove('loading'); }
-
                 if (data.stores && Array.isArray(data.stores)) populateSelect('rep-store', data.stores, '— Select Store —');
-                else { document.getElementById('err-store').classList.add('show'); document.getElementById('rep-store').classList.remove('loading'); }
+                else {
+                    document.getElementById('err-store').classList.add('show');
+                    document.getElementById('rep-store').classList.remove('loading');
+                }
 
             } catch (err) {
                 console.error('Failed to fetch dropdowns:', err);
-                document.getElementById('err-name').classList.add('show');
                 document.getElementById('err-store').classList.add('show');
-                document.getElementById('rep-name').classList.remove('loading');
                 document.getElementById('rep-store').classList.remove('loading');
             }
         }
@@ -791,22 +896,23 @@
 
             // ── Header fields ────────────────────────────────────────
             // Pick from loaded dropdown options, fallback to sample pools
-            const nameEl = document.getElementById('rep-name');
             const storeEl = document.getElementById('rep-store');
 
-            const namePool = [...nameEl.options].map(o => o.value).filter(v => v);
             const storePool = [...storeEl.options].map(o => o.value).filter(v => v);
-            const fallbackNames = ['Ravi Kumar', 'Priya Singh', 'Aman Gupta', 'Sunita Verma', 'Deepak Joshi'];
             const fallbackStores = ['Kasam – Malviya Nagar', 'Kasam – C-Scheme', 'Kasam – Vaishali Nagar', 'Kasam – Mansarovar'];
 
-            nameEl.value = rand(namePool.length ? namePool : fallbackNames);
             storeEl.value = rand(storePool.length ? storePool : fallbackStores);
 
             // Date: today (already set, keep as is)
-            // Inward time: random between 08:00 – 11:30
-            const hrs = String(8 + Math.floor(Math.random() * 4)).padStart(2, '0');
-            const mins = rand(['00', '15', '30', '45']);
-            document.getElementById('rep-inward').value = `${hrs}:${mins}`;
+            // In time: random between 08:00 – 11:30
+            const hrs1 = String(8 + Math.floor(Math.random() * 4)).padStart(2, '0');
+            const mins1 = rand(['00', '15', '30', '45']);
+            document.getElementById('rep-in').value = `${hrs1}:${mins1}`;
+
+            // Out time: random between 17:00 – 20:00
+            const hrs2 = String(17 + Math.floor(Math.random() * 4)).padStart(2, '0');
+            const mins2 = rand(['00', '15', '30', '45']);
+            document.getElementById('rep-out').value = `${hrs2}:${mins2}`;
 
             // ── Issue data pools ─────────────────────────────────────
             const descriptions = [
@@ -856,11 +962,11 @@
             for (let i = 1; i <= totalIssues; i++) {
                 const idx = idxPool[(i - 1) % descriptions.length];
                 const descEl = document.getElementById(`desc-${i}`);
-                if(descEl) descEl.value = descriptions[idx];
+                if (descEl) descEl.value = descriptions[idx];
                 const solEl = document.getElementById(`sol-${i}`);
-                if(solEl) solEl.value = solutions[idx];
+                if (solEl) solEl.value = solutions[idx];
                 const sel = document.getElementById(`status-${i}`);
-                if(sel) {
+                if (sel) {
                     sel.value = rand(statusSel);
                     updateSelectStyle(sel);
                 }
@@ -885,27 +991,28 @@
         }
 
         // ── POST data to Google Sheets via Apps Script ────────────────
-        async function saveToSheet(name, storeName, date, inwardTime, issues) {
+        async function saveToSheet(name, storeName, date, inTime, outTime, issues) {
             if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') {
                 console.warn('Apps Script URL not configured – skipping sheet save.');
                 return { skipped: true };
             }
             const res = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                body: JSON.stringify({ action: 'saveSubmission', name, storeName, date, inwardTime, issues })
+                body: JSON.stringify({ action: 'saveSubmission', name, storeName, date, inTime, outTime, issues })
             });
             return await res.json();
         }
 
         // ── Submit & Download PDF ─────────────────────────────────────
         async function handleSubmit() {
-            const name = document.getElementById('rep-name').value.trim();
+            const name = localStorage.getItem('kf_user') || 'Unknown';
             const date = document.getElementById('rep-date').value;
             const store = document.getElementById('rep-store').value.trim();
-            const inward = document.getElementById('rep-inward').value;
+            const inTime = document.getElementById('rep-in').value;
+            const outTime = document.getElementById('rep-out').value;
 
-            if (!name || !date || !store || !inward) {
-                alert('⚠️  Please fill in all header fields (Name, Date, Store Name, Inward Time) before submitting.');
+            if (!date || !store || !inTime || !outTime) {
+                alert('⚠️  Please fill in all header fields (Date, Store Name, In Time, Out Time) before submitting.');
                 return;
             }
 
@@ -920,7 +1027,7 @@
             const issues = collectIssues();
             let sheetResult = {};
             try {
-                sheetResult = await saveToSheet(name, store, date, inward, issues);
+                const sheetResult = await saveToSheet(name, store, date, inTime, outTime, issues);
                 if (sheetResult.success) console.log(`✅ Sheet: ${sheetResult.rowsAdded} rows saved`);
                 else if (sheetResult.skipped) console.warn('Sheet save skipped – URL not set.');
                 else console.error('Sheet error:', sheetResult.error);
@@ -935,17 +1042,24 @@
             try {
                 const el = document.getElementById('checklist-capture');
 
+                // Force a "Desktop" width for PDF generation (for mobile consistency)
+                const originalStyle = el.style.cssText;
+                el.style.width = '960px'; // Matching page-wrapper max-width
+                el.style.margin = '0';
+                el.style.padding = '20px';
+                el.style.backgroundColor = '#f0f4ff';
+
                 // ── Highlighted PDF Header for Store and Name ─────────
                 const pdfHeader = document.createElement('div');
                 pdfHeader.innerHTML = `
                     <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; padding: 20px 30px; border-radius: 14px; margin-bottom: 24px; box-shadow: 0 8px 30px rgba(79, 70, 229, 0.2); display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 15px;">
                             <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; background: #fff; padding: 4px; flex-shrink: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                                <img src="https://www.dropbox.com/scl/fi/3w8cuktwjostzrb21pafw/LOGO-2.png?rlkey=crkvpkwg128csjf52s565avoa&st=8gpamj7c&raw=1" style="width: 100%; height: 100%; object-fit: contain;" crossorigin="anonymous" />
+                                <img src="./LOGO-2.png" style="width: 100%; height: 100%; object-fit: contain;" />
                             </div>
                             <div>
                                 <div style="font-size: 1.4rem; font-weight: 800; line-height: 1.2;">Kasam Fashions</div>
-                                <div style="font-size: 0.85rem; font-weight: 500; opacity: 0.9;">Maintenance Team Checklist</div>
+                                <div style="font-size: 0.85rem; font-weight: 500; opacity: 0.9;">Operations Team Checklist</div>
                             </div>
                         </div>
                         <div style="text-align: right;">
@@ -1023,12 +1137,16 @@
 
                 const canvas = await html2canvas(el, {
                     scale: 2, useCORS: true, logging: false,
-                    backgroundColor: '#f0f4ff'
+                    backgroundColor: '#f0f4ff',
+                    width: 1000 // Force canvas width
                 });
 
-                swaps.forEach(({ el, placeholder }) => { 
-                    el.style.display = ''; 
-                    if (placeholder) placeholder.remove(); 
+                // Restore styles
+                el.style.cssText = originalStyle;
+
+                swaps.forEach(({ el, placeholder }) => {
+                    el.style.display = '';
+                    if (placeholder) placeholder.remove();
                 });
                 pdfHeader.remove(); // Cleanup injected header
 
@@ -1040,7 +1158,7 @@
                 const margin = 24;
                 const imgW = pdfW - margin * 2;
                 const usableH = pdfH - margin * 2;
-                
+
                 // Find safe break points in canvas coordinates
                 const elRect = el.getBoundingClientRect();
                 const safeBreaks = [];
@@ -1051,15 +1169,15 @@
                     safeBreaks.push(bottomY);
                 });
                 safeBreaks.push(canvas.height);
-                safeBreaks.sort((a,b) => a - b);
+                safeBreaks.sort((a, b) => a - b);
 
                 let srcY = 0, page = 0;
                 while (srcY < canvas.height) {
                     if (page > 0) pdf.addPage();
-                    
+
                     const maxSliceH = (usableH / imgW) * canvas.width;
                     let targetY = srcY + maxSliceH;
-                    
+
                     if (targetY >= canvas.height) {
                         targetY = canvas.height;
                     } else {
@@ -1072,16 +1190,16 @@
                         }
                         targetY = bestBreakY;
                     }
-                    
+
                     const sliceH = targetY - srcY;
                     const chunkPt = (sliceH / canvas.width) * imgW;
-                    
+
                     const sc = document.createElement('canvas');
                     sc.width = canvas.width;
                     sc.height = sliceH;
                     sc.getContext('2d').drawImage(canvas, 0, srcY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
                     pdf.addImage(sc.toDataURL('image/png'), 'PNG', margin, margin, imgW, chunkPt);
-                    
+
                     srcY = targetY;
                     page++;
                 }
@@ -1123,6 +1241,65 @@
                 setTimeout(() => t.remove(), 400);
             }, 4000);
         }
+
+        // ── Login Logic ──────────────────────────────────────────
+        function checkAuth() {
+            const user = localStorage.getItem('kf_user');
+            if (user) {
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('btn-logout').style.display = 'block';
+            } else {
+                document.getElementById('login-modal').classList.remove('hidden');
+                document.getElementById('btn-logout').style.display = 'none';
+            }
+        }
+
+        async function performLogin() {
+            const userEl = document.getElementById('login-username');
+            const passEl = document.getElementById('login-password');
+            const errEl = document.getElementById('login-error');
+            const user = userEl.value.trim();
+            const pass = passEl.value.trim();
+
+            if (!user || !pass) return;
+
+            userEl.disabled = true; passEl.disabled = true;
+            document.getElementById('loading-overlay').classList.add('show');
+            document.getElementById('overlay-text').textContent = 'Authenticating...';
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', username: user, password: pass })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('kf_user', data.username);
+                    errEl.style.display = 'none';
+                    checkAuth();
+                } else {
+                    errEl.textContent = data.error || 'Login failed';
+                    errEl.style.display = 'block';
+                }
+            } catch (e) {
+                errEl.textContent = 'Server error. Try again.';
+                errEl.style.display = 'block';
+            } finally {
+                userEl.disabled = false; passEl.disabled = false;
+                document.getElementById('loading-overlay').classList.remove('show');
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('kf_user');
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            checkAuth();
+        }
+
+        // Initialize Call
+        checkAuth();
+
     </script>
 </body>
 
