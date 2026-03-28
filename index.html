@@ -558,7 +558,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
@@ -743,7 +743,7 @@
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
         .stat-icon {
@@ -762,21 +762,57 @@
         }
 
         /* Second Image Style: Light backgrounds and borders */
-        .stat-card.total { background-color: #f8fafc; border-color: #cbd5e1; }
-        .stat-card.total .stat-value { color: #334155; }
-        .stat-card.total .stat-icon { background: linear-gradient(135deg, #64748b, #475569); }
+        .stat-card.total {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
 
-        .stat-card.completed { background-color: #f0fdf4; border-color: #bbf7d0; }
-        .stat-card.completed .stat-value { color: #16a34a; }
-        .stat-card.completed .stat-icon { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .stat-card.total .stat-value {
+            color: #334155;
+        }
 
-        .stat-card.pending { background-color: #fffbeb; border-color: #fef08a; }
-        .stat-card.pending .stat-value { color: #d97706; }
-        .stat-card.pending .stat-icon { background: linear-gradient(135deg, #fbbf24, #d97706); }
+        .stat-card.total .stat-icon {
+            background: linear-gradient(135deg, #64748b, #475569);
+        }
 
-        .stat-card.notdone { background-color: #fef2f2; border-color: #fecaca; }
-        .stat-card.notdone .stat-value { color: #dc2626; }
-        .stat-card.notdone .stat-icon { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .stat-card.completed {
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .stat-card.completed .stat-value {
+            color: #16a34a;
+        }
+
+        .stat-card.completed .stat-icon {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .stat-card.pending {
+            background-color: #fffbeb;
+            border-color: #fef08a;
+        }
+
+        .stat-card.pending .stat-value {
+            color: #d97706;
+        }
+
+        .stat-card.pending .stat-icon {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+        }
+
+        .stat-card.notdone {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .stat-card.notdone .stat-value {
+            color: #dc2626;
+        }
+
+        .stat-card.notdone .stat-icon {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
 
         .stat-value {
             font-size: 2.25rem;
@@ -1058,6 +1094,10 @@
                         </svg>
                     </div>
                 </div>
+                <div id="user-display" style="font-size: 0.8rem; font-weight: 600; color: #64748b; background: rgba(0,0,0,0.04); padding: 4px 12px; border-radius: 20px; display: none;">
+                    <i class="fas fa-user-circle" style="margin-right: 4px;"></i>
+                    <span id="user-name-span"></span>
+                </div>
                 <button class="btn-logout" id="btn-logout" style="display: none;" onclick="handleLogout()">
                     Logout
                 </button>
@@ -1076,14 +1116,16 @@
     </div>
 
     <!-- ══ LOGIN MODAL ═════════════════════════════════════════════ -->
-    <div id="login-modal" class="modal-overlay">
+    <!-- Added hidden by default to prevent flash, checkAuth will remove hidden if needed -->
+    <div id="login-modal" class="modal-overlay hidden">
         <div class="login-card">
             <div class="logo-wrap" style="margin: 0 auto 20px;">
                 <img src="https://www.dropbox.com/scl/fi/3w8cuktwjostzrb21pafw/LOGO-2.png?rlkey=crkvpkwg128csjf52s565avoa&st=8gpamj7c&raw=1"
                     alt="Logo" />
             </div>
             <h2 style="margin-bottom: 24px; font-weight: 800; color: #1e293b;">Login with your Credentials</h2>
-            <input type="text" id="login-username" class="login-input" style="margin-bottom: 16px;" placeholder="Username" />
+            <input type="text" id="login-username" class="login-input" style="margin-bottom: 16px;"
+                placeholder="Username" />
             <div class="password-wrap">
                 <input type="password" id="login-password" class="login-input" placeholder="Password" />
                 <i class="fas fa-eye toggle-pass" id="eye-icon" onclick="togglePassword()"></i>
@@ -1236,7 +1278,7 @@
         </div>
 
         <!-- ══ CHECKLIST VIEW ════════════════════════════════════════ -->
-        <div id="checklist-view" class="checklist-container active">
+        <div id="checklist-view" class="checklist-container">
             <div id="checklist-capture">
 
                 <!-- Reporter Info -->
@@ -1405,7 +1447,7 @@
                         if (elements.length > 0) {
                             const index = elements[0].index;
                             const statusLabel = statusLabels[index]; // e.g., 'Completed', 'Pending', 'Not Done'
-                            
+
                             // Toggle Reset: If already selected, clear it
                             if (filterEl.value.toLowerCase() === statusLabel.toLowerCase()) {
                                 filterEl.value = "";
@@ -1444,7 +1486,7 @@
                         x: { stacked: true, grid: { display: false }, ticks: { stepSize: 1, autoSkip: false } },
                         y: { stacked: true, grid: { display: false } }
                     },
-                    plugins: { 
+                    plugins: {
                         legend: { display: false },
                         tooltip: { mode: 'index', intersect: true }
                     },
@@ -1453,7 +1495,7 @@
                         if (elements.length > 0) {
                             const index = elements[0].index;
                             const storeLabel = stores[index];
-                            
+
                             // Toggle Reset: If already selected, clear it
                             if (filterEl.value === storeLabel) {
                                 filterEl.value = "";
@@ -1492,7 +1534,7 @@
                         x: { stacked: true, grid: { display: false }, ticks: { stepSize: 1, autoSkip: false } },
                         y: { stacked: true, grid: { display: false } }
                     },
-                    plugins: { 
+                    plugins: {
                         legend: { display: false },
                         tooltip: { mode: 'index', intersect: true }
                     },
@@ -1620,8 +1662,7 @@
             }
         }
 
-        // Run on page load
-        loadDropdowns();
+
 
         // ── ⚡ Test Fill – auto-populate all fields ───────────────────
         function fillForTest() {
@@ -1714,7 +1755,7 @@
             if (inEl) inEl.value = "";
             const outEl = document.getElementById('rep-out');
             if (outEl) outEl.value = "";
-            
+
             // Reset Today's Date (keep as is or reset to current)
             document.getElementById('rep-date').value = new Date().toISOString().split('T')[0];
 
@@ -1731,10 +1772,10 @@
                     updateSelectStyle(sel);
                 }
             }
-            
+
             // Refresh scores for current view
             updateScoreCard();
-            
+
             // Smoothly scroll back to top of form
             window.scrollTo({ top: 0, behavior: 'smooth' });
             showToast('🔄 Checklist reset for a new submission');
@@ -2039,22 +2080,36 @@
         function checkAuth() {
             const user = localStorage.getItem('kf_user');
             const role = localStorage.getItem('kf_role');
+            const loginModal = document.getElementById('login-modal');
+            const userDisplay = document.getElementById('user-display');
+            const userNameSpan = document.getElementById('user-name-span');
+            const logoutBtn = document.getElementById('btn-logout');
+            const viewTabs = document.getElementById('view-tabs');
 
             if (user) {
-                document.getElementById('login-modal').classList.add('hidden');
-                document.getElementById('btn-logout').style.display = 'block';
+                // Already Logged In
+                loginModal.classList.add('hidden');
+                if(logoutBtn) logoutBtn.style.display = 'block';
+                
+                // Show user name
+                if(userDisplay && userNameSpan) {
+                    userDisplay.style.display = 'flex';
+                    userNameSpan.textContent = user;
+                }
 
                 if (role === 'Operations Head') {
-                    document.getElementById('view-tabs').style.display = 'flex';
+                    if(viewTabs) viewTabs.style.display = 'flex';
                     switchView('dashboard');
                 } else {
-                    document.getElementById('view-tabs').style.display = 'none';
+                    if(viewTabs) viewTabs.style.display = 'none';
                     switchView('checklist');
                 }
             } else {
-                document.getElementById('login-modal').classList.remove('hidden');
-                document.getElementById('btn-logout').style.display = 'none';
-                document.getElementById('view-tabs').style.display = 'none';
+                // Not Logged In
+                loginModal.classList.remove('hidden');
+                if(logoutBtn) logoutBtn.style.display = 'none';
+                if(userDisplay) userDisplay.style.display = 'none';
+                if(viewTabs) viewTabs.style.display = 'none';
             }
         }
 
@@ -2085,6 +2140,10 @@
                 if (btnTest) btnTest.style.display = 'flex';
             }
         }
+
+        // Initialize authentication state and loading as soon as logic is ready
+        checkAuth();
+        loadDropdowns();
 
         async function performLogin() {
             const userEl = document.getElementById('login-username');
@@ -2388,9 +2447,7 @@
             updateCharts();
         }
 
-        // Initialize Call
-        checkAuth();
-
+        // Re-check auth periodically if needed or just on key actions
     </script>
 </body>
 
