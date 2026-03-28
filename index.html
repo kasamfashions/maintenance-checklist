@@ -624,20 +624,82 @@
             color: #4f46e5;
         }
 
-        .btn-logout {
-            background: rgba(239, 68, 68, .1);
-            color: #ef4444;
-            border: 2px dashed #fca5a5;
-            padding: 7px 14px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: .78rem;
-            cursor: pointer;
-            transition: all .2s;
+        /* ── User Profile & Logout ── */
+        .user-profile-wrap {
+            position: relative;
+            display: none;
+            /* Controlled by checkAuth */
         }
 
-        .btn-logout:hover {
-            background: rgba(239, 68, 68, .2);
+        .user-profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(239, 68, 68, .08);
+            color: #ef4444;
+            border: 2px dashed #fca5a5;
+            padding: 7px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: .8rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        .user-profile-btn:hover {
+            background: rgba(239, 68, 68, .15);
+            border-color: #ef4444;
+            transform: translateY(-1px);
+        }
+
+        .logout-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            border: 1px solid #fee2e2;
+        }
+
+        .user-profile-wrap:hover .logout-dropdown,
+        .user-profile-wrap:focus-within .logout-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .btn-logout-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            color: #ef4444;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: left;
+        }
+
+        .btn-logout-item:hover {
+            background: #fef2f2;
+        }
+
+        .btn-logout-item i {
+            font-size: 0.9rem;
         }
 
         .admin-panel {
@@ -1037,25 +1099,30 @@
             color: #991b1b;
         }
 
-        .nav-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .nav-tab {
-            padding: 10px 20px;
-            border-radius: 10px;
-            background: #e2e8f0;
-            color: #64748b;
-            font-weight: 600;
+        .nav-dropdown {
+            padding: 8px 32px 8px 16px;
+            border-radius: 12px;
+            background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;
+            appearance: none;
+            border: 2px solid #e2e8f0;
+            color: #1e293b;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
 
-        .nav-tab.active {
-            background: #4f46e5;
-            color: #fff;
+        .nav-dropdown:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+
+        .nav-dropdown:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
         }
     </style>
 </head>
@@ -1076,35 +1143,23 @@
                 </div>
             </div>
             <div style="display:flex; gap: 8px; align-items: center;">
-                <div id="view-tabs" class="nav-tabs" style="margin-bottom: 0; display: none;">
-                    <div class="nav-tab active" onclick="switchView('checklist')" title="Checklist">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <path d="M9 11l3 3L22 4" />
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                        </svg>
+                <select id="view-selector" class="nav-dropdown" style="display: none;"
+                    onchange="switchView(this.value)">
+                    <option value="checklist">Checklist</option>
+                    <option value="dashboard">Dashboard</option>
+                </select>
+                <div class="user-profile-wrap" id="user-profile-wrap">
+                    <div class="user-profile-btn" id="user-display">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="user-name-span"></span>
                     </div>
-                    <div class="nav-tab" onclick="switchView('dashboard')" title="Dashboard">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <rect width="7" height="9" x="3" y="3" rx="1" />
-                            <rect width="7" height="5" x="14" y="3" rx="1" />
-                            <rect width="7" height="9" x="14" y="12" rx="1" />
-                            <rect width="7" height="5" x="3" y="16" rx="1" />
-                        </svg>
+                    <div class="logout-dropdown">
+                        <button class="btn-logout-item" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
                     </div>
                 </div>
-                <div id="user-display" style="font-size: 0.8rem; font-weight: 600; color: #64748b; background: rgba(0,0,0,0.04); padding: 4px 12px; border-radius: 20px; display: none;">
-                    <i class="fas fa-user-circle" style="margin-right: 4px;"></i>
-                    <span id="user-name-span"></span>
-                </div>
-                <button class="btn-logout" id="btn-logout" style="display: none;" onclick="handleLogout()">
-                    Logout
-                </button>
-                <button class="btn-test" id="btn-test-fill" onclick="fillForTest()"
-                    title="Auto-fill all fields with test data">
-                    Test Fill
-                </button>
+
             </div>
         </div>
     </header>
@@ -1664,122 +1719,9 @@
 
 
 
-        // ── ⚡ Test Fill – auto-populate all fields ───────────────────
-        function fillForTest() {
-            const rand = arr => arr[Math.floor(Math.random() * arr.length)];
 
-            // ── Header fields ────────────────────────────────────────
-            // Pick from loaded dropdown options, fallback to sample pools
-            const storeEl = document.getElementById('rep-store');
 
-            const storePool = [...storeEl.options].map(o => o.value).filter(v => v);
-            const fallbackStores = ['Kasam – Malviya Nagar', 'Kasam – C-Scheme', 'Kasam – Vaishali Nagar', 'Kasam – Mansarovar'];
 
-            storeEl.value = rand(storePool.length ? storePool : fallbackStores);
-
-            // Date: today (already set, keep as is)
-            // In time: random between 08:00 – 11:30
-            const hrs1 = String(8 + Math.floor(Math.random() * 4)).padStart(2, '0');
-            const mins1 = rand(['00', '15', '30', '45']);
-            document.getElementById('rep-in').value = `${hrs1}:${mins1}`;
-
-            // Out time: random between 17:00 – 20:00
-            const hrs2 = String(17 + Math.floor(Math.random() * 4)).padStart(2, '0');
-            const mins2 = rand(['00', '15', '30', '45']);
-            document.getElementById('rep-out').value = `${hrs2}:${mins2}`;
-
-            // ── Issue data pools ─────────────────────────────────────
-            const descriptions = [
-                'AC unit in the fitting room is not cooling properly.',
-                'Ceiling light flickering near the checkout counter.',
-                'Water leakage observed near the store entrance.',
-                'Main entrance door hinge is broken and not closing fully.',
-                'Floor tile cracked near the display section.',
-                'Fire extinguisher inspection tag is overdue.',
-                'CCTV camera near stockroom showing blank screen.',
-                'Electrical switchboard panel has loose wiring.',
-                'Hand sanitiser dispenser near entrance is empty / broken.',
-                'Store signage LED strip partially not working.',
-                'Stockroom shelf bracket bent and needs replacement.',
-                'Trial room mirror has a crack on the lower side.',
-                'Exhaust fan in washroom making loud noise.',
-                'POS machine billing counter has loose cable.',
-                'Mannequin stand on the ground floor is unstable.',
-            ];
-            const solutions = [
-                'Called HVAC technician – scheduled visit for tomorrow.',
-                'Replaced faulty tube light and starter.',
-                'Plumber contacted, temporary seal applied.',
-                'Hinge replaced with spare from maintenance kit.',
-                'Cordoned off area, floor tile order placed.',
-                'Inspection done, new tag affixed.',
-                'Checked DVR connection, camera cable re-seated.',
-                'Electrician called, wiring tightened and taped.',
-                'Refilled dispenser, lodged replacement request.',
-                'Replaced damaged LED section, rest functional.',
-                'New bracket installed from stock.',
-                'Mirror replacement ordered from vendor.',
-                'Fan motor lubricated, noise reduced.',
-                'Cable re-routed and clipped properly.',
-                'Base plate adjusted and ankles tightened.',
-            ];
-            const statuses = ['completed', 'pending', 'not-done'];
-            const statusSel = ['completed', 'pending', 'not-done'];
-
-            // Shuffle description indices so no two issues repeat
-            const idxPool = [...Array(descriptions.length).keys()];
-            for (let i = idxPool.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [idxPool[i], idxPool[j]] = [idxPool[j], idxPool[i]];
-            }
-
-            for (let i = 1; i <= totalIssues; i++) {
-                const idx = idxPool[(i - 1) % descriptions.length];
-                const descEl = document.getElementById(`desc-${i}`);
-                if (descEl) descEl.value = descriptions[idx];
-                const solEl = document.getElementById(`sol-${i}`);
-                if (solEl) solEl.value = solutions[idx];
-                const sel = document.getElementById(`status-${i}`);
-                if (sel) {
-                    sel.value = rand(statusSel);
-                    updateSelectStyle(sel);
-                }
-            }
-        }
-
-        function resetForm() {
-            // Reset Header
-            const storeEl = document.getElementById('rep-store');
-            if (storeEl) storeEl.value = "";
-            const inEl = document.getElementById('rep-in');
-            if (inEl) inEl.value = "";
-            const outEl = document.getElementById('rep-out');
-            if (outEl) outEl.value = "";
-
-            // Reset Today's Date (keep as is or reset to current)
-            document.getElementById('rep-date').value = new Date().toISOString().split('T')[0];
-
-            // Reset all 15 issue rows
-            for (let i = 1; i <= totalIssues; i++) {
-                const desc = document.getElementById(`desc-${i}`);
-                const sol = document.getElementById(`sol-${i}`);
-                const sel = document.getElementById(`status-${i}`);
-
-                if (desc) desc.value = "";
-                if (sol) sol.value = "";
-                if (sel) {
-                    sel.value = "";
-                    updateSelectStyle(sel);
-                }
-            }
-
-            // Refresh scores for current view
-            updateScoreCard();
-
-            // Smoothly scroll back to top of form
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            showToast('🔄 Checklist reset for a new submission');
-        }
 
 
         function collectIssues() {
@@ -2052,6 +1994,7 @@
 
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('🔄 Checklist reset for a new submission');
         }
 
         // ── Lightweight toast notification ───────────────────────────
@@ -2081,63 +2024,53 @@
             const user = localStorage.getItem('kf_user');
             const role = localStorage.getItem('kf_role');
             const loginModal = document.getElementById('login-modal');
-            const userDisplay = document.getElementById('user-display');
+            const userProfileWrap = document.getElementById('user-profile-wrap');
             const userNameSpan = document.getElementById('user-name-span');
-            const logoutBtn = document.getElementById('btn-logout');
-            const viewTabs = document.getElementById('view-tabs');
+            const viewSelector = document.getElementById('view-selector');
 
             if (user) {
                 // Already Logged In
                 loginModal.classList.add('hidden');
-                if(logoutBtn) logoutBtn.style.display = 'block';
-                
+                if (userProfileWrap) userProfileWrap.style.display = 'block';
+
                 // Show user name
-                if(userDisplay && userNameSpan) {
-                    userDisplay.style.display = 'flex';
+                if (userNameSpan) {
                     userNameSpan.textContent = user;
                 }
 
                 if (role === 'Operations Head') {
-                    if(viewTabs) viewTabs.style.display = 'flex';
+                    if (viewSelector) viewSelector.style.display = 'block';
                     switchView('dashboard');
                 } else {
-                    if(viewTabs) viewTabs.style.display = 'none';
+                    if (viewSelector) viewSelector.style.display = 'none';
                     switchView('checklist');
                 }
             } else {
                 // Not Logged In
                 loginModal.classList.remove('hidden');
-                if(logoutBtn) logoutBtn.style.display = 'none';
-                if(userDisplay) userDisplay.style.display = 'none';
-                if(viewTabs) viewTabs.style.display = 'none';
+                if (userProfileWrap) userProfileWrap.style.display = 'none';
+                if (viewSelector) viewSelector.style.display = 'none';
             }
         }
 
         function switchView(view) {
             const dash = document.getElementById('dashboard-view');
             const check = document.getElementById('checklist-view');
-            const tabs = document.querySelectorAll('.nav-tab');
-            const btnTest = document.getElementById('btn-test-fill');
+            const selector = document.getElementById('view-selector');
+
+            if (selector) selector.value = view;
 
             if (view === 'dashboard') {
                 dash.classList.add('active');
                 dash.classList.remove('hidden');
                 check.classList.remove('active');
                 check.classList.add('hidden');
-
-                tabs[1].classList.add('active');
-                tabs[0].classList.remove('active');
-                if (btnTest) btnTest.style.display = 'none';
                 fetchDashboardData();
             } else {
                 dash.classList.remove('active');
                 dash.classList.add('hidden');
                 check.classList.add('active');
                 check.classList.remove('hidden');
-
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
-                if (btnTest) btnTest.style.display = 'flex';
             }
         }
 
